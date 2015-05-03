@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "license": "Apache License, Version 2.0",
+  "author": "Andrei Neculau",
+  "name": "atlasboard-shell-board",
+  "description": "A shell-board built for AtlasBoard (andreineculau/atlasboard fork)",
+  "version": "0.0.1",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "dependencies": {
+    "ansi_up": "^1.1.3",
+    "xterm-colors": "^1.0.0"
+  },
+  "scripts": {
+    "start": "atlasboard start"
+  }
+}

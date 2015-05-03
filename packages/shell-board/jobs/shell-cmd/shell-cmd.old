@@ -1,0 +1,80 @@
+/* jshint node:true */
+require('shelljs/global');
+
+module.exports = function(config, dependencies, cb) {
+  return cb(null, Object.keys(dependencies));
+
+  var async = require('async');
+  var logger = dependencies.logger;
+  var moment = dependencies.moment;
+  var _ = dependencies.underscore;
+
+  function getBuildInfos (build, cb) {
+    var options = {
+      url: config.serverUrl + '/job/' + config.job + '/' + build.number + '/api/json',
+      rejectUnauthorized: false,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    dependencies.easyRequest.JSON(options, function (error, rawBuildData) {
+      var buildTime = moment(rawBuildData.timestamp);
+      if (config.lang) {
+        buildTime = buildTime.lang(config.lang)
+      }
+
+      var fullName = rawBuildData.fullDisplayName;
+      if (config.removeRegex) {
+        if (_.isArray(config.removeRegex)) {
+          _.each(config.removeRegex, function (singleRemoveRegex) {
+            fullName = fullName.replace(new RegExp(singleRemoveRegex), '');
+          });
+
+        } else {
+          fullName = rawBuildData.fullDisplayName.replace(new RegExp(config.removeRegex), '');
+        }
+      }
+
+      var buildData = {
+        fullName: fullName,
+        number: build.number,
+        timeAgo: buildTime.fromNow(),
+        result: rawBuildData.result.toLowerCase()
+      };
+
+      cb(null, buildData);
+    });
+  };
+
+  var jenkinsJobUrl = config.serverUrl + '/job/' + config.job + '/api/json'
+
+  var numberOfJobs = config.numberOfJobs || 3;
+
+  var options = {
+    url: jenkinsJobUrl,
+    rejectUnauthorized: false,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  dependencies.easyRequest.JSON(options, function (error, jobData) {
+    if (error) {
+      var err_msg = error || 'ERROR: Couldn\'t access the job at ' + options.url;
+      logger.error(err_msg);
+      return cb(err_msg);
+    }
+
+    var lastBuilds = jobData.builds.slice(0, Math.min(numberOfJobs, jobData.builds.length));
+
+    async.map(lastBuilds, getBuildInfos, function (err, lastBuildsInfos) {
+	  var data = {
+	    name: jobData.displayName,
+	    builds: lastBuildsInfos
+	  };
+
+	  return cb(null, data);
+	});
+  });
+};

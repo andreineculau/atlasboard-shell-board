@@ -1,0 +1,84 @@
+{
+    "title": "Shell Board",
+    "_scripts": [],
+    "_stylesheets": [],
+    "layout": {
+        "widgets": [{
+            "title": "Guilt (last week)",
+            "job": "shell-cmd",
+            "component": "shell-cmd",
+            "row": 2,
+            "col": 5,
+            "width": 4,
+            "height": 1,
+            "config": {
+                "interval": 10800000,
+                "css": {
+                    "background-color": "#000000"
+                },
+                "options": {
+                    "cwd": "/Users/example/git-repo"
+                },
+                "cmd": "git guilt HEAD@{1.week.ago} HEAD"
+            }
+        }, {
+            "title": "Top commiters (last month)",
+            "job": "shell-cmd",
+            "component": "shell-cmd",
+            "row": 2,
+            "col": 1,
+            "width": 2,
+            "height": 2,
+            "config": {
+                "interval": 10800000,
+                "css": {
+                    "background-color": "#000000"
+                },
+                "options": {
+                    "cwd": "/Users/example/git-repo"
+                },
+                "cmd": "git shortlog --all -s --since='1 month ago' < /dev/tty | sort -rn"
+            }
+        }, {
+            "title": "Commits by weekday (last month)",
+            "job": "shell-cmd",
+            "component": "shell-cmd",
+            "row": 2,
+            "col": 3,
+            "width": 1,
+            "height": 2,
+            "config": {
+                "interval": 10800000,
+                "css": {
+                    "background-color": "#000000"
+                },
+                "options": {
+                    "cwd": "/Users/example/git-repo"
+                },
+                "cmd": [
+                    "for i in Mon Tue Wed Thu Fri Sat Sun; do echo $(echo \" $i: \"; git shortlog --all --since='1 month ago' -n --format='%ad %s' < /dev/tty | grep \"$i \" | wc -l); done",
+                    "&& echo",
+                    "&& for i in $(seq -w 0 23); do echo $(echo \" $i:\"; git shortlog --all -n --format='%ad %s' < /dev/tty | grep \" $i:\" | wc -l); done"
+                ]
+            }
+        }, {
+            "title": "Commit calendar (last 6 months)",
+            "job": "shell-cmd",
+            "component": "shell-cmd",
+            "row": 3,
+            "col": 5,
+            "width": 4,
+            "height": 1,
+            "config": {
+                "interval": 10800000,
+                "css": {
+                    "background-color": "#000000"
+                },
+                "options": {
+                    "cwd": "/Users/example/git-repo"
+                },
+                "cmd": "git cal --ansi --period=-6"
+            }
+        }]
+    }
+}
