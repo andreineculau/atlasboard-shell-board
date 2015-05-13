@@ -1,7 +1,8 @@
 /* global $ */
 widget = {
   onFirstData: function(el, data) {
-    var $el = $(el);
+    var $el = $(el),
+        key;
 
     if (data.config.css) {
       for (key in data.config.css) {
@@ -18,10 +19,11 @@ widget = {
     this.onFirstData(el, data);
 
     $('.stdout', $el).html(data.htmlStdout || data.stdout);
-    $('.stderr', $el).html(data.htmlStderr || data.stderr);
+    $('.stderr', $el).html(data.htmlStderr || data.stderr);
   },
 
   onError: function (el, data) {
     'use strict';
+    console.error(data);
   }
 };
