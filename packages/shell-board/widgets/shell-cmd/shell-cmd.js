@@ -4,9 +4,9 @@ widget = {
     var $el = $(el),
         key;
 
-    if (data.config.css) {
-      for (key in data.config.css) {
-        $el.parent().css(key, data.config.css[key]);
+    if (data._.config.css) {
+      for (key in data._.config.css) {
+        $el.parent().css(key, data._.config.css[key]);
       }
     }
     this.onFirstData = _.noop();
